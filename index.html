@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Scribble Power — a 10-week online writing craft series by Scribble Ink." />
-    <meta name="theme-color" content="#07080c" />
+    <meta name="theme-color" content="#f3f6fb" />
     <title>Scribble Power · Scribble Ink</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -17,13 +17,14 @@
             <span class="brand__company" id="company">Scribble Ink</span>
             <h1 class="brand__title" id="brandTitle">Scribble Power</h1>
             <p class="brand__tag" id="brandTag">
-              Ten weeks of sharper sentence craft — then writing under pressure.
+              Same craft lessons every week. New theme each week. Stronger writers over time.
             </p>
           </div>
           <div class="hub-meta">
-            <span class="chip">Grades <strong>4–9</strong></span>
-            <span class="chip">Skills <strong>~5 min</strong> · Pressure <strong>~10 min</strong></span>
-            <span class="chip">Two versions on every screen</span>
+            <span class="chip"><strong>Champs</strong> + <strong>Legends</strong></span>
+            <span class="chip">Lessons <strong>45 min</strong> · start with a <strong>5-min soaker</strong></span>
+            <span class="chip">Same drills <strong>every week</strong> · new <strong>theme</strong></span>
+            <span class="chip">Champs + Legends <strong>side by side</strong></span>
           </div>
         </header>
 
@@ -31,15 +32,16 @@
           <article class="panel panel--skills">
             <h2>Skills Night</h2>
             <p>
-              Rapid craft drills: sentence starts, stop-word cuts, power verbs, exact adjectives,
-              banishing <em>very</em>, killing echoes, and richer vocabulary. Short, sharp, display-ready.
+              Fun 5-minute soaker, then the same eight ~5-minute multi-skill drills each week —
+              strong starts, stop-word cuts, power verbs, exact adjectives, banishing <em>very</em>,
+              killing repetition, and richer vocabulary — practised through a fresh theme.
             </p>
           </article>
           <article class="panel panel--pressure">
             <h2>Under Pressure</h2>
             <p>
-              Longer timed writes that force the toolkit into narrative, informational, persuasive,
-              and analytical pieces. Same dual versions for mixed-age rooms.
+              Same soaker warm-up, then the same four ~10-minute writes each week. Force the toolkit
+              into narrative, informational, persuasive, and analytical pieces — new theme, stronger craft.
             </p>
           </article>
         </div>
@@ -60,7 +62,7 @@
         <header class="night-hero">
           <div>
             <h1 id="weekFocus">Focus</h1>
-            <p>Pick the night. Every task screen offers Version A (Grades 4–6) and Version B (Grades 7–9).</p>
+            <p>Pick the night. Every task screen shows <strong>Champs</strong> and <strong>Legends</strong> side by side.</p>
           </div>
         </header>
 
@@ -86,39 +88,56 @@
             <span class="crumb" id="taskCrumb">Week</span>
           </div>
           <div class="bar__right">
-            <div class="version-toggle" role="group" aria-label="Version">
-              <button type="button" class="btn is-active" data-version="a">Version A · 4–6</button>
-              <button type="button" class="btn" data-version="b">Version B · 7–9</button>
-            </div>
             <button type="button" class="btn" id="prevTask">Prev</button>
             <button type="button" class="btn btn--cyan" id="nextTask">Next</button>
+            <button type="button" class="btn btn--present" id="presentToggle" aria-pressed="false">Present</button>
           </div>
         </div>
 
-        <header class="night-hero">
+        <header class="night-hero night-hero--task">
           <div>
-            <h1 id="taskTitle">Task</h1>
-            <p id="nightHeroText">Goal</p>
+            <p class="task-kicker" id="nightHeroText">Goal</p>
+            <h1 class="task-title" id="taskTitle">Task</h1>
           </div>
           <div class="timer" id="timerCard">
             <span class="timer__label" id="timerLabel">Timer</span>
             <div class="timer__value" id="timerValue">5:00</div>
-            <div style="display:flex;gap:0.35rem;justify-content:center;margin-top:0.55rem">
-              <button type="button" class="btn" id="pauseTimer" style="padding:0.4rem 0.7rem;font-size:0.85rem">Pause</button>
-              <button type="button" class="btn" id="restartTimer" style="padding:0.4rem 0.7rem;font-size:0.85rem">Restart</button>
+            <div class="timer__controls">
+              <button type="button" class="btn" id="pauseTimer">Pause</button>
+              <button type="button" class="btn" id="restartTimer">Restart</button>
             </div>
           </div>
         </header>
 
         <div class="task-nav" id="taskNav"></div>
 
+        <div class="present-dock" aria-label="Present mode controls">
+          <button type="button" class="btn" id="presentPrev">Prev</button>
+          <button type="button" class="btn btn--cyan" id="presentNext">Next</button>
+          <button type="button" class="btn btn--present is-on" id="presentExit">Exit present</button>
+        </div>
+
         <div class="task-stage">
           <article class="prompt-card">
             <div class="prompt-card__eyebrow" id="promptTags"></div>
-            <h2 id="promptHeading">Prompt</h2>
-            <p class="lead" id="promptLead"></p>
-            <div class="source" id="promptSource"></div>
             <ul class="checklist" id="promptChecklist"></ul>
+
+            <div class="version-pair" aria-label="Champs and Legends">
+              <section class="version-pane version-pane--a">
+                <header class="version-pane__head">
+                  <span class="version-pane__badge">Champs</span>
+                </header>
+                <p class="lead" id="promptLeadA"></p>
+                <div class="source" id="promptSourceA"></div>
+              </section>
+              <section class="version-pane version-pane--b">
+                <header class="version-pane__head">
+                  <span class="version-pane__badge">Legends</span>
+                </header>
+                <p class="lead" id="promptLeadB"></p>
+                <div class="source" id="promptSourceB"></div>
+              </section>
+            </div>
           </article>
 
           <aside class="side-stack">
@@ -136,11 +155,19 @@
                 <textarea id="demoText" placeholder="Type a live model answer here while students watch…" aria-label="Teacher demonstration writing space"></textarea>
                 <div class="demo__actions">
                   <button type="button" class="btn" id="clearDemo">Clear</button>
-                  <button type="button" class="btn btn--coral" id="revealSample">Toggle sample solution</button>
+                  <button type="button" class="btn btn--coral" id="revealSample">Toggle sample solutions</button>
                 </div>
                 <div class="sample" id="sampleBox">
-                  <strong>Sample solution</strong>
-                  <p></p>
+                  <div class="sample__pair">
+                    <div>
+                      <strong>Sample · Champs</strong>
+                      <p id="sampleA"></p>
+                    </div>
+                    <div>
+                      <strong>Sample · Legends</strong>
+                      <p id="sampleB"></p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

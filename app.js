@@ -5,10 +5,10 @@ const state = {
   weekId: null,
   night: null, // 'skills' | 'pressure'
   taskIndex: 0,
-  version: 'a',
   secondsLeft: 0,
   timerId: null,
   timerRunning: false,
+  present: false,
 };
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -21,7 +21,8 @@ function weekById(id) {
 function currentTasks() {
   const week = weekById(state.weekId);
   if (!week || !state.night) return [];
-  return week[state.night] || [];
+  const nightTasks = week[state.night] || [];
+  return week.soaker ? [week.soaker, ...nightTasks] : nightTasks;
 }
 
 function currentTask() {
@@ -70,7 +71,37 @@ function renderTimer() {
 function showScreen(name) {
   state.screen = name;
   $$('.screen').forEach((s) => s.classList.toggle('is-active', s.dataset.screen === name));
+  if (name !== 'task' && state.present) setPresent(false);
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setPresent(on) {
+  state.present = Boolean(on);
+  document.body.classList.toggle('is-present', state.present);
+  const toggle = $('#presentToggle');
+  if (toggle) {
+    toggle.setAttribute('aria-pressed', String(state.present));
+    toggle.textContent = state.present ? 'Exit present' : 'Present';
+    toggle.classList.toggle('is-on', state.present);
+  }
+  if (state.present) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goPrevTask() {
+  if (state.taskIndex <= 0) return;
+  state.taskIndex -= 1;
+  const task = currentTask();
+  if (task) startTimer(task.minutes);
+  renderTask();
+}
+
+function goNextTask() {
+  const tasks = currentTasks();
+  if (state.taskIndex >= tasks.length - 1) return;
+  state.taskIndex += 1;
+  const task = currentTask();
+  if (task) startTimer(task.minutes);
+  renderTask();
 }
 
 function renderHub() {
@@ -97,15 +128,14 @@ function openWeek(id) {
   $('#weekFocus').textContent = week.focus;
   $('#skillsBlurb').textContent = week.skillsGoal;
   $('#pressureBlurb').textContent = week.pressureGoal;
-  $('#skillsCount').textContent = `${week.skills.length} × ~5 min`;
-  $('#pressureCount').textContent = `${week.pressure.length} × ~10 min`;
+  $('#skillsCount').textContent = `45 min · soaker + ${week.skills.length} × ~5`;
+  $('#pressureCount').textContent = `45 min · soaker + ${week.pressure.length} × ~10`;
   showScreen('week');
 }
 
 function openNight(night) {
   state.night = night;
   state.taskIndex = 0;
-  state.version = 'a';
   const task = currentTask();
   if (task) startTimer(task.minutes);
   renderTask();
@@ -136,19 +166,19 @@ function renderTask() {
     )
     .join('');
 
-  $$('.version-toggle .btn').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.version === state.version);
-  });
-
-  const version = task[state.version];
+  const skillTags = (task.skills || [])
+    .map((skill) => `<span class="tag tag--skill">${skill}</span>`)
+    .join('');
   $('#promptTags').innerHTML = `
     <span class="tag tag--mode">${task.mode}</span>
     <span class="tag tag--genre">${task.genre}</span>
-    <span class="tag tag--time">${task.minutes} min · Version ${state.version.toUpperCase()}</span>
+    <span class="tag tag--time">${task.minutes} min · Champs + Legends</span>
+    ${skillTags}
   `;
-  $('#promptHeading').textContent = task.title;
-  $('#promptLead').textContent = version.lead;
-  $('#promptSource').innerHTML = version.source;
+  $('#promptLeadA').textContent = task.a.lead;
+  $('#promptSourceA').innerHTML = task.a.source;
+  $('#promptLeadB').textContent = task.b.lead;
+  $('#promptSourceB').innerHTML = task.b.source;
   $('#promptChecklist').innerHTML = task.checklist.map((item) => `<li>${item}</li>`).join('');
   $('#coachText').textContent = task.coach;
 
@@ -157,12 +187,18 @@ function renderTask() {
   const area = $('#demoText');
   demo.classList.remove('is-open');
   sample.classList.remove('is-visible');
-  sample.querySelector('p').innerHTML = version.sample;
+  $('#sampleA').innerHTML = task.a.sample;
+  $('#sampleB').innerHTML = task.b.sample;
   area.value = '';
   $('#demoToggleLabel').textContent = 'Show teacher demo space';
 
   renderTimer();
-  $('#timerLabel').textContent = state.night === 'skills' ? 'Skill timer' : 'Pressure timer';
+  const isSoaker = task.mode === 'Fun warm-up' || task.id?.includes('soak');
+  $('#timerLabel').textContent = isSoaker
+    ? 'Soaker timer'
+    : state.night === 'skills'
+      ? 'Skill timer'
+      : 'Pressure timer';
 }
 
 function bind() {
@@ -192,13 +228,6 @@ function bind() {
     const task = currentTask();
     if (task) startTimer(task.minutes);
     renderTask();
-  });
-
-  $$('.version-toggle .btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      state.version = btn.dataset.version;
-      renderTask();
-    });
   });
 
   $('#restartTimer')?.addEventListener('click', () => {
@@ -246,21 +275,24 @@ function bind() {
     $('#sampleBox').classList.toggle('is-visible');
   });
 
-  $('#prevTask')?.addEventListener('click', () => {
-    if (state.taskIndex <= 0) return;
-    state.taskIndex -= 1;
-    const task = currentTask();
-    if (task) startTimer(task.minutes);
-    renderTask();
-  });
+  $('#prevTask')?.addEventListener('click', goPrevTask);
+  $('#nextTask')?.addEventListener('click', goNextTask);
+  $('#presentPrev')?.addEventListener('click', goPrevTask);
+  $('#presentNext')?.addEventListener('click', goNextTask);
 
-  $('#nextTask')?.addEventListener('click', () => {
-    const tasks = currentTasks();
-    if (state.taskIndex >= tasks.length - 1) return;
-    state.taskIndex += 1;
-    const task = currentTask();
-    if (task) startTimer(task.minutes);
-    renderTask();
+  $('#presentToggle')?.addEventListener('click', () => setPresent(!state.present));
+  $('#presentExit')?.addEventListener('click', () => setPresent(false));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.present) {
+      setPresent(false);
+      return;
+    }
+    if ((e.key === 'p' || e.key === 'P') && state.screen === 'task' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'TEXTAREA' || tag === 'INPUT') return;
+      setPresent(!state.present);
+    }
   });
 }
 
