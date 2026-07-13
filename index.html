@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Scribble Power — a 10-week online writing craft series by Scribble Ink." />
+    <meta name="theme-color" content="#07080c" />
+    <title>Scribble Power · Scribble Ink</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- HUB -->
+      <section class="screen is-active" data-screen="hub">
+        <header class="hub-top">
+          <div class="brand">
+            <span class="brand__company" id="company">Scribble Ink</span>
+            <h1 class="brand__title" id="brandTitle">Scribble Power</h1>
+            <p class="brand__tag" id="brandTag">
+              Ten weeks of sharper sentence craft — then writing under pressure.
+            </p>
+          </div>
+          <div class="hub-meta">
+            <span class="chip">Grades <strong>4–9</strong></span>
+            <span class="chip">Skills <strong>~5 min</strong> · Pressure <strong>~10 min</strong></span>
+            <span class="chip">Two versions on every screen</span>
+          </div>
+        </header>
+
+        <div class="hub-intro">
+          <article class="panel panel--skills">
+            <h2>Skills Night</h2>
+            <p>
+              Rapid craft drills: sentence starts, stop-word cuts, power verbs, exact adjectives,
+              banishing <em>very</em>, killing echoes, and richer vocabulary. Short, sharp, display-ready.
+            </p>
+          </article>
+          <article class="panel panel--pressure">
+            <h2>Under Pressure</h2>
+            <p>
+              Longer timed writes that force the toolkit into narrative, informational, persuasive,
+              and analytical pieces. Same dual versions for mixed-age rooms.
+            </p>
+          </article>
+        </div>
+
+        <div class="week-grid" id="weekGrid" aria-label="Ten week unit"></div>
+        <p class="footer-note">Created for classroom display · <strong>Scribble Ink</strong></p>
+      </section>
+
+      <!-- WEEK CHOOSER -->
+      <section class="screen" data-screen="week">
+        <div class="bar">
+          <div class="bar__left">
+            <button type="button" class="btn btn--ghost" id="backToHub">← All weeks</button>
+            <span class="crumb" id="weekCrumb"><strong id="weekTitle">Week</strong></span>
+          </div>
+        </div>
+
+        <header class="night-hero">
+          <div>
+            <h1 id="weekFocus">Focus</h1>
+            <p>Pick the night. Every task screen offers Version A (Grades 4–6) and Version B (Grades 7–9).</p>
+          </div>
+        </header>
+
+        <div class="night-chooser">
+          <button type="button" class="night-card night-card--skills" id="openSkills">
+            <span class="night-card__kicker" id="skillsCount">Skills</span>
+            <h2>Skills Night</h2>
+            <p id="skillsBlurb">Craft drills.</p>
+          </button>
+          <button type="button" class="night-card night-card--pressure" id="openPressure">
+            <span class="night-card__kicker" id="pressureCount">Pressure</span>
+            <h2>Under Pressure</h2>
+            <p id="pressureBlurb">Longer performance writes.</p>
+          </button>
+        </div>
+      </section>
+
+      <!-- TASK -->
+      <section class="screen" data-screen="task">
+        <div class="bar">
+          <div class="bar__left">
+            <button type="button" class="btn btn--ghost" id="backToWeek">← Night select</button>
+            <span class="crumb" id="taskCrumb">Week</span>
+          </div>
+          <div class="bar__right">
+            <div class="version-toggle" role="group" aria-label="Version">
+              <button type="button" class="btn is-active" data-version="a">Version A · 4–6</button>
+              <button type="button" class="btn" data-version="b">Version B · 7–9</button>
+            </div>
+            <button type="button" class="btn" id="prevTask">Prev</button>
+            <button type="button" class="btn btn--cyan" id="nextTask">Next</button>
+          </div>
+        </div>
+
+        <header class="night-hero">
+          <div>
+            <h1 id="taskTitle">Task</h1>
+            <p id="nightHeroText">Goal</p>
+          </div>
+          <div class="timer" id="timerCard">
+            <span class="timer__label" id="timerLabel">Timer</span>
+            <div class="timer__value" id="timerValue">5:00</div>
+            <div style="display:flex;gap:0.35rem;justify-content:center;margin-top:0.55rem">
+              <button type="button" class="btn" id="pauseTimer" style="padding:0.4rem 0.7rem;font-size:0.85rem">Pause</button>
+              <button type="button" class="btn" id="restartTimer" style="padding:0.4rem 0.7rem;font-size:0.85rem">Restart</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="task-nav" id="taskNav"></div>
+
+        <div class="task-stage">
+          <article class="prompt-card">
+            <div class="prompt-card__eyebrow" id="promptTags"></div>
+            <h2 id="promptHeading">Prompt</h2>
+            <p class="lead" id="promptLead"></p>
+            <div class="source" id="promptSource"></div>
+            <ul class="checklist" id="promptChecklist"></ul>
+          </article>
+
+          <aside class="side-stack">
+            <div class="coach">
+              <h3>Coach note</h3>
+              <p id="coachText"></p>
+            </div>
+
+            <div class="demo" id="demoPanel">
+              <button type="button" class="demo__toggle" id="demoToggle">
+                <span id="demoToggleLabel">Show teacher demo space</span>
+                <span id="demoChevron">▸</span>
+              </button>
+              <div class="demo__body">
+                <textarea id="demoText" placeholder="Type a live model answer here while students watch…" aria-label="Teacher demonstration writing space"></textarea>
+                <div class="demo__actions">
+                  <button type="button" class="btn" id="clearDemo">Clear</button>
+                  <button type="button" class="btn btn--coral" id="revealSample">Toggle sample solution</button>
+                </div>
+                <div class="sample" id="sampleBox">
+                  <strong>Sample solution</strong>
+                  <p></p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
