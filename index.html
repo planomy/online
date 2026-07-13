@@ -88,6 +88,11 @@
             <span class="crumb" id="taskCrumb">Week</span>
           </div>
           <div class="bar__right">
+            <div class="font-resizer" role="group" aria-label="Activity font size">
+              <button type="button" class="btn btn--font" id="fontSmaller" title="Smaller activity text">A−</button>
+              <span class="font-resizer__label" id="fontSizeLabel">100%</span>
+              <button type="button" class="btn btn--font" id="fontBigger" title="Bigger activity text">A+</button>
+            </div>
             <button type="button" class="btn" id="prevTask">Prev</button>
             <button type="button" class="btn btn--cyan" id="nextTask">Next</button>
             <button type="button" class="btn btn--present" id="presentToggle" aria-pressed="false">Present</button>
@@ -112,6 +117,11 @@
         <div class="task-nav" id="taskNav"></div>
 
         <div class="present-dock" aria-label="Present mode controls">
+          <div class="font-resizer" role="group" aria-label="Activity font size">
+            <button type="button" class="btn btn--font" id="presentFontSmaller" title="Smaller activity text">A−</button>
+            <span class="font-resizer__label" id="presentFontSizeLabel">100%</span>
+            <button type="button" class="btn btn--font" id="presentFontBigger" title="Bigger activity text">A+</button>
+          </div>
           <button type="button" class="btn" id="presentPrev">Prev</button>
           <button type="button" class="btn btn--cyan" id="presentNext">Next</button>
           <button type="button" class="btn btn--present is-on" id="presentExit">Exit present</button>

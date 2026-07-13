@@ -1,5 +1,8 @@
 const data = window.SCRIBBLE_POWER;
 
+const ACTIVITY_SCALES = [1, 1.15, 1.3, 1.5, 1.75, 2];
+const FONT_STORAGE_KEY = 'scribble-power-activity-scale';
+
 const state = {
   screen: 'hub',
   weekId: null,
@@ -9,6 +12,7 @@ const state = {
   timerId: null,
   timerRunning: false,
   present: false,
+  activityScaleIndex: 0,
 };
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -85,6 +89,54 @@ function setPresent(on) {
     toggle.classList.toggle('is-on', state.present);
   }
   if (state.present) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function activityScale() {
+  return ACTIVITY_SCALES[state.activityScaleIndex] || 1;
+}
+
+function applyActivityScale() {
+  const scale = activityScale();
+  document.documentElement.style.setProperty('--activity-scale', String(scale));
+  const label = `${Math.round(scale * 100)}%`;
+  $$('.font-resizer__label').forEach((el) => {
+    el.textContent = label;
+  });
+  const atMin = state.activityScaleIndex <= 0;
+  const atMax = state.activityScaleIndex >= ACTIVITY_SCALES.length - 1;
+  ['fontSmaller', 'presentFontSmaller'].forEach((id) => {
+    const btn = $(`#${id}`);
+    if (btn) btn.disabled = atMin;
+  });
+  ['fontBigger', 'presentFontBigger'].forEach((id) => {
+    const btn = $(`#${id}`);
+    if (btn) btn.disabled = atMax;
+  });
+}
+
+function bumpActivityScale(delta) {
+  const next = Math.max(0, Math.min(ACTIVITY_SCALES.length - 1, state.activityScaleIndex + delta));
+  if (next === state.activityScaleIndex) return;
+  state.activityScaleIndex = next;
+  try {
+    localStorage.setItem(FONT_STORAGE_KEY, String(next));
+  } catch (_) {
+    /* ignore */
+  }
+  applyActivityScale();
+}
+
+function loadActivityScale() {
+  try {
+    const raw = localStorage.getItem(FONT_STORAGE_KEY);
+    const idx = Number(raw);
+    if (Number.isInteger(idx) && idx >= 0 && idx < ACTIVITY_SCALES.length) {
+      state.activityScaleIndex = idx;
+    }
+  } catch (_) {
+    /* ignore */
+  }
+  applyActivityScale();
 }
 
 function goPrevTask() {
@@ -283,15 +335,24 @@ function bind() {
   $('#presentToggle')?.addEventListener('click', () => setPresent(!state.present));
   $('#presentExit')?.addEventListener('click', () => setPresent(false));
 
+  $('#fontSmaller')?.addEventListener('click', () => bumpActivityScale(-1));
+  $('#fontBigger')?.addEventListener('click', () => bumpActivityScale(1));
+  $('#presentFontSmaller')?.addEventListener('click', () => bumpActivityScale(-1));
+  $('#presentFontBigger')?.addEventListener('click', () => bumpActivityScale(1));
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && state.present) {
       setPresent(false);
       return;
     }
+    const tag = (e.target && e.target.tagName) || '';
+    if (tag === 'TEXTAREA' || tag === 'INPUT') return;
     if ((e.key === 'p' || e.key === 'P') && state.screen === 'task' && !e.metaKey && !e.ctrlKey && !e.altKey) {
-      const tag = (e.target && e.target.tagName) || '';
-      if (tag === 'TEXTAREA' || tag === 'INPUT') return;
       setPresent(!state.present);
+    }
+    if (state.screen === 'task' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      if (e.key === '+' || e.key === '=') bumpActivityScale(1);
+      if (e.key === '-' || e.key === '_') bumpActivityScale(-1);
     }
   });
 }
@@ -300,6 +361,7 @@ function init() {
   $('#company').textContent = data.brand.company;
   $('#brandTitle').textContent = data.brand.title;
   $('#brandTag').textContent = data.brand.tagline;
+  loadActivityScale();
   renderHub();
   bind();
   showScreen('hub');

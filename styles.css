@@ -19,6 +19,7 @@
   --font-body: 'Newsreader', Georgia, serif;
   --font-ui: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --activity-scale: 1;
 }
 
 *,
@@ -619,6 +620,49 @@ button {
   color: var(--paper-dim);
 }
 
+/* Activity text students read — Champs / Legends panes only */
+.version-pane .lead {
+  font-size: calc(clamp(1.15rem, 1.9vw, 1.4rem) * var(--activity-scale, 1));
+}
+
+.version-pane .source {
+  font-size: calc(clamp(1.1rem, 1.85vw, 1.32rem) * var(--activity-scale, 1));
+}
+
+.font-resizer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.font-resizer__label {
+  min-width: 3.2rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.btn--font {
+  min-width: 2.4rem;
+  padding: 0.45rem 0.65rem;
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.btn--font:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .version-pane--a .source {
   border-left-color: var(--cyan);
 }
@@ -984,12 +1028,12 @@ body.is-present .version-pane__badge {
   padding: 0.35rem 0.8rem;
 }
 
-body.is-present .prompt-card .lead {
-  font-size: clamp(1.35rem, 2.3vw, 1.75rem);
+body.is-present .version-pane .lead {
+  font-size: calc(clamp(1.35rem, 2.3vw, 1.75rem) * var(--activity-scale, 1));
 }
 
-body.is-present .prompt-card .source {
-  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+body.is-present .version-pane .source {
+  font-size: calc(clamp(1.3rem, 2.2vw, 1.7rem) * var(--activity-scale, 1));
   padding: 1rem 1.15rem;
   line-height: 1.5;
 }
